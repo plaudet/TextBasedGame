@@ -35,9 +35,9 @@ public class MainScreenGestion extends FragmentActivity implements ActionBar.OnN
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         
-        DatabaseManager dbm = new DatabaseManager();
-        dbm.init();
-        	
+//        DatabaseManager dbm = new DatabaseManager();
+//        dbm.init();
+//        	
         // Set up the dropdown list navigation in the action bar.
         actionBar.setListNavigationCallbacks(
                 // Specify a SpinnerAdapter to populate the dropdown list.
