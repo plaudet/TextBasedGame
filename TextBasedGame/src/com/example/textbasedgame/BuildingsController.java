@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import android.app.Activity;
+import android.os.Bundle;
+
 public class BuildingsController {
 
 	public BuildingsController() {
@@ -22,6 +25,9 @@ public class BuildingsController {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+	}
+	
+	public getAllBuildings() {
+		
 	}
 }

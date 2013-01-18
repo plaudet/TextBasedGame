@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import android.app.Activity;
@@ -13,47 +14,53 @@ import android.os.Bundle;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class H2Controller extends Activity {
+public class H2Controller {
 
-	private StringBuilder log;
-	private long start;
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		ScrollView sv = new ScrollView(this);
-		TextView tv = new TextView(this);
-		tv.setHorizontallyScrolling(true);
-		tv.setVerticalScrollBarEnabled(true);
-		String s = "";
-		s += runTest();
-		tv.setText(s);
-		sv.addView(tv);
-		setContentView(sv);
+	private String DB_NAME = "textbasegame.log";
+	private String PATH = "/data/data/com.example.textbased.game/data/";
+	private Connection conn = null;
+	
+	public H2Controller() {
+		String url = "jdbc:h2:"+PATH+"/"+DB_NAME+";FILE_LOCK=FS";
+		try {
+			Class.forName("org.h2.Driver");
+			conn = DriverManager.getConnection(url);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		createDb();
 	}
 
-	ByteArrayOutputStream byteBuff = new ByteArrayOutputStream();
-
-	private String runTest() {
-		System.gc();
-		start();
-		log("-- started h2 db");
+	public Connection getConnection() {
+		return conn;
+	}
+	
+	private boolean isExist() {
+		File db = new File(PATH + DB_NAME);
+		return db.exists();
+	}
+	
+	private void createDb(){
+		if (isExist()) {
+			return;
+		}
+		Statement stat;
 		try {
-			File db = new File("/data/data/com.example.textbasedgame/data/TextBasedGame.db");
-			if (db.exists()) {
-				log("deleted: " + db.delete());
-			}
-			Connection conn = null;
-			String url = "jdbc:h2:/data/data/com.example.textbasedgame/data/hello;FILE_LOCK=FS";
-			Class.forName("org.h2.Driver");
-			log("classForName");
-			conn = DriverManager.getConnection(url);
-			Statement stat = conn.createStatement();
+			stat = conn.createStatement();
+			stat.execute("create table if not exists tblBuildings(id int primary key, name varchar, description varchar)");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/*private String runTest() {
+		try {
+			
+			
 			try {
-				stat.execute("create table if not exists test(id int primary key, name varchar)");
-				log("created");
-				ResultSet rs;
-				PreparedStatement prepSelect = conn
 						.prepareStatement("select * from test");
 				int count = 0;
 				rs = prepSelect.executeQuery();
@@ -83,16 +90,5 @@ public class H2Controller extends Activity {
 			log(e.getMessage());
 		}
 		return log.toString();
-	}
-
-	private void start() {
-		log = new StringBuilder();
-		start = System.currentTimeMillis();
-	}
-
-	private void log(String s) {
-		long t = System.currentTimeMillis() - start;
-		log.append(t).append(':').append(s).append(" \n");
-	}
-
+	}*/
 }
